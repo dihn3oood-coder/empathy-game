@@ -26,13 +26,13 @@
       overflow: hidden;
     }
 
-    /* 16:9 Widescreen Game Stage Container */
+    /* Responsive Game Container */
     #game-stage {
       width: 100vw;
       height: 56.25vw; /* 16:9 Aspect Ratio */
       max-width: 1280px;
       max-height: 720px;
-      background: url('bg.jpg') center/cover no-repeat;
+      background: #1e1b4b url('https://cdn.dribbble.com/userupload/23834584/file/original-d02f9be4444ba1aca1f4d19730618402.jpg') center/cover no-repeat;
       border: 8px solid #fbbf24;
       border-radius: 28px;
       box-shadow: 0 0 50px rgba(251, 191, 36, 0.4), inset 0 0 40px rgba(0, 0, 0, 0.6);
@@ -45,7 +45,18 @@
       overflow: hidden;
     }
 
-    /* Stage Lights Top Bar */
+    /* Mobile & Small Screen Adaptation */
+    @media (max-aspect-ratio: 16/9), (max-width: 900px) {
+      #game-stage {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        border-width: 4px;
+        padding: 16px 20px;
+      }
+    }
+
+    /* Game Show Stage Lights Top Bar */
     .stage-lights {
       position: absolute;
       top: 0;
@@ -76,104 +87,7 @@
       100% { opacity: 1; transform: scale(1.1); }
     }
 
-    /* --- OPENER / INTRO SCREEN --- */
-    .intro-stage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      z-index: 50;
-      text-align: center;
-      gap: 15px;
-      background: rgba(15, 23, 42, 0.75);
-      border-radius: 20px;
-      padding: 20px;
-      backdrop-filter: blur(4px);
-    }
-
-    .intro-title {
-      font-size: 3.5rem;
-      color: #fbbf24;
-      text-shadow: 0 8px 0 #b45309, 0 0 35px rgba(251, 191, 36, 0.9);
-      letter-spacing: 2px;
-      line-height: 1.1;
-    }
-
-    .intro-subtitle {
-      font-size: 1.8rem;
-      color: #ffffff;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
-    }
-
-    .intro-characters {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 50px;
-      margin: 10px 0;
-    }
-
-    .intro-char-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 12px 25px;
-      border-radius: 25px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(5px);
-    }
-
-    .intro-char-img {
-      width: 140px;
-      height: 160px;
-      object-fit: contain;
-      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.6));
-    }
-
-    .intro-char-name {
-      color: #ffffff;
-      font-size: 1.4rem;
-      margin-top: 6px;
-      background: rgba(15, 23, 42, 0.9);
-      padding: 4px 16px;
-      border-radius: 20px;
-      border: 2px solid #fbbf24;
-    }
-
-    .vs-badge {
-      font-size: 2.5rem;
-      color: #ef4444;
-      text-shadow: 0 4px 0 #7f1d1d;
-    }
-
-    .start-btn {
-      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-      color: #fff;
-      font-size: 2.2rem;
-      padding: 15px 55px;
-      border-radius: 60px;
-      border: 5px solid #ffffff;
-      cursor: pointer;
-      box-shadow: 0 10px 0 #15803d, 0 15px 30px rgba(34, 197, 94, 0.6);
-      transition: transform 0.15s ease;
-      margin-top: 10px;
-    }
-
-    .start-btn:hover {
-      transform: translateY(-4px) scale(1.03);
-    }
-
-    .start-btn:active {
-      transform: translateY(6px);
-      box-shadow: 0 4px 0 #15803d;
-    }
-
-    /* --- MAIN GAMEPLAY INTERFACE --- */
+    /* Header Bar */
     .header-bar {
       width: 100%;
       display: flex;
@@ -204,6 +118,7 @@
       letter-spacing: 1px;
     }
 
+    /* Stage Middle Content Area */
     .middle-stage {
       width: 100%;
       display: flex;
@@ -215,6 +130,7 @@
       z-index: 10;
     }
 
+    /* 3D Character Container & Image Styling */
     .character-box {
       width: 180px;
       height: 220px;
@@ -224,15 +140,28 @@
       justify-content: center;
       filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
       transition: transform 0.3s ease;
+      flex-shrink: 0;
     }
 
     .character-box:hover {
       transform: translateY(-5px) scale(1.03);
     }
 
+    .char-avatar {
+      width: 120px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 3px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(4px);
+    }
+
     .char-img {
-      width: 140px;
-      height: 170px;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
     }
 
@@ -244,8 +173,11 @@
       padding: 4px 12px;
       border-radius: 20px;
       border: 2px solid rgba(255, 255, 255, 0.3);
+      text-align: center;
+      white-space: nowrap;
     }
 
+    /* Speech Bubble */
     .speech-bubble-container {
       flex: 1;
       height: 220px;
@@ -288,6 +220,7 @@
       font-weight: 900;
     }
 
+    /* Huge Buttons Section */
     .button-stage {
       width: 100%;
       display: flex;
@@ -298,7 +231,7 @@
 
     .huge-btn {
       width: 45%;
-      height: 100px;
+      height: 90px;
       border-radius: 30px;
       font-family: 'Fredoka One', cursive;
       font-size: 2.2rem;
@@ -447,10 +380,12 @@
       margin: 5px 0;
     }
 
-    .final-char-img {
+    .final-char-avatar {
       width: 110px;
       height: 130px;
-      object-fit: contain;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .summary-cards {
@@ -534,7 +469,7 @@
 <body>
 
   <div id="game-stage">
-    <!-- Stage Lights -->
+    <!-- Top Stage Lights -->
     <div class="stage-lights">
       <div class="light-bulb"></div>
       <div class="light-bulb"></div>
@@ -546,39 +481,31 @@
       <div class="light-bulb"></div>
     </div>
 
-    <!-- 1. OPENER / INTRO SCREEN -->
-    <div class="intro-stage" id="intro-screen">
-      <div class="intro-title">❤️ HUMAN or 🤖 AI?</div>
-      <div class="intro-subtitle">Can you guess who has REAL feelings?</div>
-
-      <div class="intro-characters">
-        <div class="intro-char-card">
-          <img class="intro-char-img" src="girl.png" alt="Hessa" />
-          <div class="intro-char-name">HESSA (HUMAN)</div>
-        </div>
-
-        <div class="vs-badge">VS</div>
-
-        <div class="intro-char-card">
-          <img class="intro-char-img" src="robot.png" alt="Fahim" />
-          <div class="intro-char-name">FAHIM (AI)</div>
-        </div>
-      </div>
-
-      <button class="start-btn" onclick="startGame()">🎬 START GAME SHOW!</button>
-    </div>
-
-    <!-- 2. MAIN GAMEPLAY INTERFACE -->
-    <div class="header-bar" id="game-header" style="display: none;">
+    <!-- MAIN GAMEPLAY INTERFACE -->
+    <div class="header-bar" id="game-header">
       <div class="round-tag" id="round-display">ROUND 1 OF 10</div>
       <div class="score-tag" id="score-display">❤️ Score: 0/10</div>
     </div>
 
-    <div class="middle-stage" id="game-middle" style="display: none;">
-      <!-- Hessa Character Image -->
+    <div class="middle-stage" id="game-middle">
+      <!-- Child Character Vector Asset -->
       <div class="character-box">
-        <img class="char-img" src="girl.png" alt="Hessa Human" />
-        <div class="character-label">HESSA (HUMAN)</div>
+        <div class="char-avatar">
+          <svg class="char-img" viewBox="0 0 100 120" fill="none">
+            <!-- Body -->
+            <path d="M20 110 C20 80, 35 70, 50 70 C65 70, 80 80, 80 110 Z" fill="#ef4444" />
+            <!-- Head -->
+            <circle cx="50" cy="45" r="28" fill="#fde047" />
+            <!-- Eyes -->
+            <circle cx="40" cy="42" r="4" fill="#0f172a" />
+            <circle cx="60" cy="42" r="4" fill="#0f172a" />
+            <!-- Smile -->
+            <path d="M 40 55 Q 50 65 60 55" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none" />
+            <!-- Hair -->
+            <path d="M 22 40 C 20 15, 80 15, 78 40 C 70 25, 30 25, 22 40 Z" fill="#78350f" />
+          </svg>
+        </div>
+        <div class="character-label">LIA (HUMAN)</div>
       </div>
 
       <!-- Speech Bubble Question Container -->
@@ -587,15 +514,32 @@
         <div class="question-text" id="question-text">Loading question...</div>
       </div>
 
-      <!-- Fahim Character Image -->
+      <!-- Robot Character Vector Asset -->
       <div class="character-box">
-        <img class="char-img" src="robot.png" alt="Fahim AI" />
-        <div class="character-label">FAHIM (AI)</div>
+        <div class="char-avatar">
+          <svg class="char-img" viewBox="0 0 100 120" fill="none">
+            <!-- Antenna -->
+            <line x1="50" y1="10" x2="50" y2="25" stroke="#06b6d4" stroke-width="4" />
+            <circle cx="50" cy="8" r="5" fill="#f59e0b" />
+            <!-- Body -->
+            <rect x="25" y="75" width="50" height="35" rx="8" fill="#0284c7" stroke="#38bdf8" stroke-width="3" />
+            <circle cx="50" cy="92" r="6" fill="#22c55e" />
+            <!-- Head -->
+            <rect x="20" y="25" width="60" height="45" rx="12" fill="#0891b2" stroke="#38bdf8" stroke-width="3" />
+            <!-- Screen Eyes -->
+            <rect x="30" y="35" width="40" height="18" rx="6" fill="#0f172a" />
+            <circle cx="40" cy="44" r="3" fill="#06b6d4" />
+            <circle cx="60" cy="44" r="3" fill="#06b6d4" />
+            <!-- Mouth Bar -->
+            <line x1="38" y1="60" x2="62" y2="60" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="character-label">BOT-E (AI)</div>
       </div>
     </div>
 
-    <!-- Answer Buttons Stage -->
-    <div class="button-stage" id="game-buttons" style="display: none;">
+    <!-- Huge Answer Buttons Stage -->
+    <div class="button-stage" id="game-buttons">
       <button class="huge-btn btn-human" onclick="makeChoice('HUMAN')">
         ❤️ HUMAN
       </button>
@@ -613,12 +557,21 @@
       </div>
     </div>
 
-    <!-- 3. FINALE SCREEN -->
+    <!-- FINALE SCREEN -->
     <div class="final-stage" id="final-screen">
       <div class="final-title">🏆 EMPATHY SUPER DETECTIVE!</div>
       
       <div class="final-characters">
-        <img class="final-char-img" src="girl.png" alt="Hessa" />
+        <div class="final-char-avatar">
+          <svg width="100" height="120" viewBox="0 0 100 120" fill="none">
+            <path d="M20 110 C20 80, 35 70, 50 70 C65 70, 80 80, 80 110 Z" fill="#ef4444" />
+            <circle cx="50" cy="45" r="28" fill="#fde047" />
+            <circle cx="40" cy="42" r="4" fill="#0f172a" />
+            <circle cx="60" cy="42" r="4" fill="#0f172a" />
+            <path d="M 40 55 Q 50 65 60 55" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none" />
+            <path d="M 22 40 C 20 15, 80 15, 78 40 C 70 25, 30 25, 22 40 Z" fill="#78350f" />
+          </svg>
+        </div>
 
         <!-- Big Trophy -->
         <svg width="90" height="110" viewBox="0 0 100 120" fill="none">
@@ -629,16 +582,28 @@
           <path d="M85 30 C95 30 95 50 80 55" stroke="#FBBF24" stroke-width="5" fill="none" />
         </svg>
 
-        <img class="final-char-img" src="robot.png" alt="Fahim" />
+        <div class="final-char-avatar">
+          <svg width="100" height="120" viewBox="0 0 100 120" fill="none">
+            <line x1="50" y1="10" x2="50" y2="25" stroke="#06b6d4" stroke-width="4" />
+            <circle cx="50" cy="8" r="5" fill="#f59e0b" />
+            <rect x="25" y="75" width="50" height="35" rx="8" fill="#0284c7" stroke="#38bdf8" stroke-width="3" />
+            <circle cx="50" cy="92" r="6" fill="#22c55e" />
+            <rect x="20" y="25" width="60" height="45" rx="12" fill="#0891b2" stroke="#38bdf8" stroke-width="3" />
+            <rect x="30" y="35" width="40" height="18" rx="6" fill="#0f172a" />
+            <circle cx="40" cy="44" r="3" fill="#06b6d4" />
+            <circle cx="60" cy="44" r="3" fill="#06b6d4" />
+            <line x1="38" y1="60" x2="62" y2="60" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </div>
       </div>
 
       <div class="summary-cards">
         <div class="card-human-sum">
-          <div class="sum-title">❤️ HUMAN (Hessa)</div>
+          <div class="sum-title">❤️ HUMAN</div>
           <div class="sum-desc">“I can FEEL.”</div>
         </div>
         <div class="card-ai-sum">
-          <div class="sum-title">🤖 AI (Fahim)</div>
+          <div class="sum-title">🤖 AI</div>
           <div class="sum-desc">“I can HELP, but I don’t FEEL.”</div>
         </div>
       </div>
@@ -656,7 +621,7 @@
   </div>
 
   <script>
-    // Original Game Questions Dataset
+    // Game Questions Dataset
     const questions = [
       {
         text: "“My friend was sad. I felt sad too and gave her a hug.”",
@@ -712,55 +677,63 @@
 
     let currentRound = 0;
     let score = 0;
-    let isCorrectAnswer = false; // Fixed State Tracker
+    let isRetry = false;
 
-    // Sound Synthesizer
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Web Audio Sound Synthesizer with AudioContext Autoplay Fix
+    let audioCtx = null;
 
-    function playSound(type) {
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+    }
 
-      if (type === 'correct') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'wrong') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'win') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
-        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
+    function playSound(type) {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'win') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
+          gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.5);
+        }
+      } catch (e) {
+        console.warn('Audio playback not supported or blocked:', e);
       }
     }
 
-    // Start Game from Opener
-    function startGame() {
-      playSound('correct');
-      document.getElementById('intro-screen').style.display = 'none';
-      document.getElementById('game-header').style.display = 'flex';
-      document.getElementById('game-middle').style.display = 'flex';
-      document.getElementById('game-buttons').style.display = 'flex';
-      loadQuestion();
+    // Safely trigger confetti
+    function triggerConfetti(options) {
+      if (typeof confetti === 'function') {
+        confetti(options);
+      }
     }
 
     // Load Question
@@ -778,8 +751,9 @@
       }
     }
 
-    // Process Choice
+    // Process Player Choice
     function makeChoice(choice) {
+      initAudio();
       const q = questions[currentRound];
       const modal = document.getElementById('feedback-modal');
       const modalCard = document.getElementById('modal-card-bg');
@@ -788,33 +762,36 @@
       const btn = document.getElementById('modal-btn');
 
       if (choice === q.answer) {
+        // CORRECT CHOICE
         playSound('correct');
-        score++;
+        if (!isRetry) score++;
         document.getElementById('score-display').innerText = `❤️ Score: ${score}/10`;
 
         if (q.answer === 'HUMAN') {
           title.innerText = '❤️ YES!';
           title.style.color = '#ef4444';
-          subtitle.innerText = 'HESSA CAN FEEL REAL EMPATHY!';
+          subtitle.innerText = 'A HUMAN CAN FEEL EMPATHY!';
           modalCard.style.borderColor = '#ef4444';
           modalCard.style.boxShadow = '0 0 50px rgba(239, 68, 68, 0.5)';
         } else {
           title.innerText = '🤖 YES!';
           title.style.color = '#06b6d4';
-          subtitle.innerText = 'FAHIM CAN SOUND CARING...\nBUT IT DOESN’T HAVE FEELINGS!';
+          subtitle.innerText = 'AI CAN SOUND CARING...\nBUT IT DOESN’T HAVE FEELINGS!';
           modalCard.style.borderColor = '#06b6d4';
           modalCard.style.boxShadow = '0 0 50px rgba(6, 182, 212, 0.5)';
         }
 
-        confetti({
+        // Fire Confetti on Correct Choice
+        triggerConfetti({
           particleCount: 60,
           spread: 70,
           origin: { y: 0.6 }
         });
 
         btn.innerText = 'NEXT ROUND ➔';
-        isCorrectAnswer = true;
+        isRetry = false;
       } else {
+        // WRONG CHOICE
         playSound('wrong');
         title.innerText = '🤔 OOPS! TRY AGAIN!';
         title.style.color = '#f59e0b';
@@ -822,18 +799,18 @@
         modalCard.style.borderColor = '#f59e0b';
         modalCard.style.boxShadow = '0 0 50px rgba(245, 158, 11, 0.5)';
         btn.innerText = 'TRY AGAIN 🔄';
-        isCorrectAnswer = false;
+        isRetry = true;
       }
 
       modal.style.display = 'flex';
     }
 
-    // Fixed Next Action Progression
+    // Modal Action Button (Next or Retry)
     function nextAction() {
       const modal = document.getElementById('feedback-modal');
       modal.style.display = 'none';
 
-      if (isCorrectAnswer) {
+      if (!isRetry) {
         currentRound++;
         if (currentRound < questions.length) {
           loadQuestion();
@@ -843,6 +820,7 @@
       }
     }
 
+    // Show Game Show Finale
     function showFinalScreen() {
       playSound('win');
       document.getElementById('game-header').style.display = 'none';
@@ -852,6 +830,7 @@
       const finalScreen = document.getElementById('final-screen');
       finalScreen.style.display = 'flex';
 
+      // Big Finale Confetti Burst
       let duration = 3 * 1000;
       let animationEnd = Date.now() + duration;
       let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -862,8 +841,8 @@
           return clearInterval(interval);
         }
         let particleCount = 50 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        triggerConfetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        triggerConfetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
       }, 250);
     }
 
@@ -871,13 +850,20 @@
       return Math.random() * (max - min) + min;
     }
 
+    // Restart Entire Game
     function restartGame() {
       currentRound = 0;
       score = 0;
-      isCorrectAnswer = false;
+      isRetry = false;
       document.getElementById('final-screen').style.display = 'none';
-      document.getElementById('intro-screen').style.display = 'flex';
+      document.getElementById('game-header').style.display = 'flex';
+      document.getElementById('game-middle').style.display = 'flex';
+      document.getElementById('game-buttons').style.display = 'flex';
+      loadQuestion();
     }
+
+    // Start Game
+    loadQuestion();
   </script>
 </body>
 </html>
