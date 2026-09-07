@@ -1,881 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>❤️ HUMAN or 🤖 AI? - Empathy Game Show</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
-  <!-- Canvas Confetti Library -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Game</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
-
     body {
-      background-color: #0f172a;
-      font-family: 'Fredoka One', cursive, sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
     }
-
-    /* 16:9 Widescreen Game Stage Container */
-    #game-stage {
-      width: 100vw;
-      height: 56.25vw; /* 16:9 Aspect Ratio */
-      max-width: 1280px;
-      max-height: 720px;
-      background: url('bg.jpg') center/cover no-repeat;
-      border: 8px solid #fbbf24;
-      border-radius: 28px;
-      box-shadow: 0 0 50px rgba(251, 191, 36, 0.4), inset 0 0 40px rgba(0, 0, 0, 0.6);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 36px;
-      overflow: hidden;
-    }
-
-    /* Stage Lights Top Bar */
-    .stage-lights {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
-      z-index: 5;
-    }
-
-    .light-bulb {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #fbbf24;
-      box-shadow: 0 0 15px #fbbf24, 0 0 25px #fbbf24;
-      animation: pulseLight 1.5s infinite alternate;
-    }
-
-    .light-bulb:nth-child(even) {
-      background: #ec4899;
-      box-shadow: 0 0 15px #ec4899, 0 0 25px #ec4899;
-      animation-delay: 0.75s;
-    }
-
-    @keyframes pulseLight {
-      0% { opacity: 0.4; transform: scale(0.9); }
-      100% { opacity: 1; transform: scale(1.1); }
-    }
-
-    /* --- OPENER / INTRO SCREEN --- */
-    .intro-stage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      z-index: 50;
-      text-align: center;
-      gap: 15px;
-      background: rgba(15, 23, 42, 0.75);
-      border-radius: 20px;
-      padding: 20px;
-      backdrop-filter: blur(4px);
-    }
-
-    .intro-title {
-      font-size: 3.5rem;
-      color: #fbbf24;
-      text-shadow: 0 8px 0 #b45309, 0 0 35px rgba(251, 191, 36, 0.9);
-      letter-spacing: 2px;
-      line-height: 1.1;
-    }
-
-    .intro-subtitle {
-      font-size: 1.8rem;
-      color: #ffffff;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
-    }
-
-    .intro-characters {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 50px;
-      margin: 10px 0;
-    }
-
-    .intro-char-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 12px 25px;
-      border-radius: 25px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(5px);
-    }
-
-    .intro-char-img {
-      width: 140px;
-      height: 160px;
-      object-fit: contain;
-      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.6));
-    }
-
-    .intro-char-name {
-      color: #ffffff;
-      font-size: 1.4rem;
-      margin-top: 6px;
-      background: rgba(15, 23, 42, 0.9);
-      padding: 4px 16px;
-      border-radius: 20px;
-      border: 2px solid #fbbf24;
-    }
-
-    .vs-badge {
-      font-size: 2.5rem;
-      color: #ef4444;
-      text-shadow: 0 4px 0 #7f1d1d;
-    }
-
-    .start-btn {
-      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-      color: #fff;
-      font-size: 2.2rem;
-      padding: 15px 55px;
-      border-radius: 60px;
-      border: 5px solid #ffffff;
-      cursor: pointer;
-      box-shadow: 0 10px 0 #15803d, 0 15px 30px rgba(34, 197, 94, 0.6);
-      transition: transform 0.15s ease;
-      margin-top: 10px;
-    }
-
-    .start-btn:hover {
-      transform: translateY(-4px) scale(1.03);
-    }
-
-    .start-btn:active {
-      transform: translateY(6px);
-      box-shadow: 0 4px 0 #15803d;
-    }
-
-    /* --- MAIN GAMEPLAY INTERFACE --- */
-    .header-bar {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .round-tag {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: #fff;
-      font-size: 1.4rem;
-      padding: 8px 24px;
-      border-radius: 50px;
-      border: 3px solid #60a5fa;
-      box-shadow: 0 6px 0 #1e40af, 0 8px 15px rgba(0,0,0,0.4);
-      letter-spacing: 1px;
-    }
-
-    .score-tag {
-      background: linear-gradient(135deg, #ec4899, #be185d);
-      color: #fff;
-      font-size: 1.4rem;
-      padding: 8px 24px;
-      border-radius: 50px;
-      border: 3px solid #f472b6;
-      box-shadow: 0 6px 0 #9d174d, 0 8px 15px rgba(0,0,0,0.4);
-      letter-spacing: 1px;
-    }
-
-    .middle-stage {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex: 1;
-      margin: 15px 0;
-      z-index: 10;
-    }
-
-    .character-box {
-      width: 180px;
-      height: 220px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-      transition: transform 0.3s ease;
-    }
-
-    .character-box:hover {
-      transform: translateY(-5px) scale(1.03);
-    }
-
-    .char-img {
-      width: 140px;
-      height: 170px;
-      object-fit: contain;
-    }
-
-    .character-label {
-      color: #ffffff;
-      font-size: 1.1rem;
-      margin-top: 8px;
-      background: rgba(15, 23, 42, 0.85);
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .speech-bubble-container {
-      flex: 1;
-      height: 220px;
-      background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-      border: 6px solid #fbbf24;
-      border-radius: 35px;
-      box-shadow: 0 12px 0 #d97706, 0 20px 30px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    .quiz-card {
+      background: #ffffff;
       padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 320px;
       text-align: center;
-      position: relative;
     }
-
-    .special-tag {
-      position: absolute;
-      top: -18px;
-      background: #f59e0b;
-      color: #fff;
-      font-size: 1.1rem;
-      padding: 4px 18px;
-      border-radius: 20px;
-      border: 2px solid #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      animation: bounce 1s infinite alternate;
-    }
-
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-5px); }
-    }
-
-    .question-text {
-      color: #1e293b;
-      font-size: 1.85rem;
-      line-height: 1.35;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-    }
-
-    .button-stage {
-      width: 100%;
+    .options {
       display: flex;
-      justify-content: center;
-      gap: 30px;
-      z-index: 10;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
     }
-
-    .huge-btn {
-      width: 45%;
-      height: 100px;
-      border-radius: 30px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 2.2rem;
-      color: #ffffff;
+    button {
+      padding: 10px;
+      border: 1px solid #007bff;
+      background-color: #007bff;
+      color: white;
+      border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      border: 5px solid #ffffff;
-      transition: all 0.15s ease;
-      position: relative;
-      outline: none;
+      transition: background 0.2s;
     }
-
-    .btn-human {
-      background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
-      box-shadow: 0 10px 0 #991b1b, 0 15px 25px rgba(239, 68, 68, 0.5);
+    button:hover {
+      background-color: #0056b3;
     }
-
-    .btn-human:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 0 #991b1b, 0 20px 30px rgba(239, 68, 68, 0.6);
+    .score-board {
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #333;
     }
-
-    .btn-human:active {
-      transform: translateY(6px);
-      box-shadow: 0 4px 0 #991b1b, 0 8px 15px rgba(239, 68, 68, 0.4);
-    }
-
-    .btn-ai {
-      background: linear-gradient(180deg, #06b6d4 0%, #0891b2 100%);
-      box-shadow: 0 10px 0 #155e75, 0 15px 25px rgba(6, 182, 212, 0.5);
-    }
-
-    .btn-ai:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 0 #155e75, 0 20px 30px rgba(6, 182, 212, 0.6);
-    }
-
-    .btn-ai:active {
-      transform: translateY(6px);
-      box-shadow: 0 4px 0 #155e75, 0 8px 15px rgba(6, 182, 212, 0.4);
-    }
-
-    /* Modal Feedback Overlay */
-    .modal-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.92);
+    .hidden {
       display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      padding: 30px;
-      text-align: center;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .modal-card {
-      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-      border: 8px solid #38bdf8;
-      border-radius: 40px;
-      padding: 35px 45px;
-      max-width: 750px;
-      box-shadow: 0 0 50px rgba(56, 189, 248, 0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .modal-title {
-      font-size: 2.8rem;
-      color: #0f172a;
-      line-height: 1.2;
-    }
-
-    .modal-subtitle {
-      font-size: 1.8rem;
-      color: #475569;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-    }
-
-    .next-btn {
-      margin-top: 15px;
-      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-      color: #fff;
-      font-size: 1.8rem;
-      padding: 12px 45px;
-      border-radius: 50px;
-      border: 4px solid #ffffff;
-      cursor: pointer;
-      box-shadow: 0 8px 0 #15803d, 0 12px 20px rgba(34, 197, 94, 0.4);
-      transition: transform 0.15s ease;
-    }
-
-    .next-btn:hover {
-      transform: translateY(-3px);
-    }
-
-    .next-btn:active {
-      transform: translateY(4px);
-      box-shadow: 0 4px 0 #15803d;
-    }
-
-    /* Final Screen Layout */
-    .final-stage {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      z-index: 50;
-      text-align: center;
-      gap: 12px;
-      background: rgba(15, 23, 42, 0.85);
-      border-radius: 20px;
-      padding: 20px;
-    }
-
-    .final-title {
-      font-size: 2.8rem;
-      color: #fbbf24;
-      text-shadow: 0 6px 0 #b45309, 0 0 25px rgba(251, 191, 36, 0.8);
-      letter-spacing: 1px;
-    }
-
-    .final-characters {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
-      margin: 5px 0;
-    }
-
-    .final-char-img {
-      width: 110px;
-      height: 130px;
-      object-fit: contain;
-    }
-
-    .summary-cards {
-      display: flex;
-      gap: 20px;
-      width: 100%;
-      max-width: 900px;
-    }
-
-    .card-human-sum {
-      flex: 1;
-      background: linear-gradient(135deg, #fef2f2, #fee2e2);
-      border: 5px solid #ef4444;
-      border-radius: 25px;
-      padding: 12px;
-      color: #991b1b;
-      box-shadow: 0 8px 15px rgba(239, 68, 68, 0.2);
-    }
-
-    .card-ai-sum {
-      flex: 1;
-      background: linear-gradient(135deg, #ecfeff, #cffaff);
-      border: 5px solid #06b6d4;
-      border-radius: 25px;
-      padding: 12px;
-      color: #155e75;
-      box-shadow: 0 8px 15px rgba(6, 182, 212, 0.2);
-    }
-
-    .sum-title {
-      font-size: 1.8rem;
-      margin-bottom: 2px;
-    }
-
-    .sum-desc {
-      font-size: 1.3rem;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-    }
-
-    .remember-box {
-      background: rgba(255, 255, 255, 0.15);
-      border: 3px dashed #fbbf24;
-      border-radius: 20px;
-      padding: 10px 25px;
-      color: #ffffff;
-      max-width: 850px;
-      backdrop-filter: blur(5px);
-    }
-
-    .remember-title {
-      color: #fbbf24;
-      font-size: 1.3rem;
-      margin-bottom: 2px;
-    }
-
-    .remember-text {
-      font-size: 1.15rem;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      color: #f1f5f9;
-    }
-
-    .restart-btn {
-      background: linear-gradient(180deg, #a855f7 0%, #7e22ce 100%);
-      color: #fff;
-      font-size: 1.5rem;
-      padding: 10px 35px;
-      border-radius: 50px;
-      border: 3px solid #fff;
-      cursor: pointer;
-      box-shadow: 0 6px 0 #581c87, 0 10px 20px rgba(168, 85, 247, 0.4);
-      margin-top: 5px;
-    }
-
-    .restart-btn:hover {
-      transform: translateY(-2px);
     }
   </style>
 </head>
 <body>
 
-  <div id="game-stage">
-    <!-- Top Stage Lights -->
-    <div class="stage-lights">
-      <div class="light-bulb"></div>
-      <div class="light-bulb"></div>
-      <div class="light-bulb"></div>
-      <div class="light-bulb"></div>
-      <div class="light-bulb"></div>
-      <div class="light-bulb"></div>
-      <div class="light-bulb"></div>
-      <div class="light-bulb"></div>
-    </div>
-
-    <!-- 1. OPENER / INTRO SCREEN -->
-    <div class="intro-stage" id="intro-screen">
-      <div class="intro-title">❤️ HUMAN or 🤖 AI?</div>
-      <div class="intro-subtitle">Can you guess who has REAL feelings?</div>
-
-      <div class="intro-characters">
-        <div class="intro-char-card">
-          <img class="intro-char-img" src="girl.png" alt="Hessa" />
-          <div class="intro-char-name">HESSA (HUMAN)</div>
-        </div>
-
-        <div class="vs-badge">VS</div>
-
-        <div class="intro-char-card">
-          <img class="intro-char-img" src="robot.png" alt="Fahim" />
-          <div class="intro-char-name">FAHIM (AI)</div>
-        </div>
-      </div>
-
-      <button class="start-btn" onclick="startGame()">🎬 START GAME SHOW!</button>
-    </div>
-
-    <!-- 2. MAIN GAMEPLAY INTERFACE -->
-    <div class="header-bar" id="game-header" style="display: none;">
-      <div class="round-tag" id="round-display">ROUND 1 OF 10</div>
-      <div class="score-tag" id="score-display">❤️ Score: 0/10</div>
-    </div>
-
-    <div class="middle-stage" id="game-middle" style="display: none;">
-      <!-- Hessa Character Image -->
-      <div class="character-box">
-        <img class="char-img" src="girl.png" alt="Hessa Human" />
-        <div class="character-label">HESSA (HUMAN)</div>
-      </div>
-
-      <!-- Speech Bubble Question Container -->
-      <div class="speech-bubble-container">
-        <div class="special-tag" id="special-badge" style="display: none;">⭐ FINAL CHALLENGE ⭐</div>
-        <div class="question-text" id="question-text">Loading question...</div>
-      </div>
-
-      <!-- Fahim Character Image -->
-      <div class="character-box">
-        <img class="char-img" src="robot.png" alt="Fahim AI" />
-        <div class="character-label">FAHIM (AI)</div>
-      </div>
-    </div>
-
-    <!-- Answer Buttons Stage -->
-    <div class="button-stage" id="game-buttons" style="display: none;">
-      <button class="huge-btn btn-human" onclick="makeChoice('HUMAN')">
-        ❤️ HUMAN
-      </button>
-      <button class="huge-btn btn-ai" onclick="makeChoice('AI')">
-        🤖 AI
-      </button>
-    </div>
-
-    <!-- FEEDBACK OVERLAY MODAL -->
-    <div class="modal-overlay" id="feedback-modal">
-      <div class="modal-card" id="modal-card-bg">
-        <div class="modal-title" id="modal-title">❤️ YES!</div>
-        <div class="modal-subtitle" id="modal-subtitle">A HUMAN CAN FEEL EMPATHY!</div>
-        <button class="next-btn" id="modal-btn" onclick="nextAction()">CONTINUE ➔</button>
-      </div>
-    </div>
-
-    <!-- 3. FINALE SCREEN -->
-    <div class="final-stage" id="final-screen">
-      <div class="final-title">🏆 EMPATHY SUPER DETECTIVE!</div>
-      
-      <div class="final-characters">
-        <img class="final-char-img" src="girl.png" alt="Hessa" />
-
-        <!-- Big Trophy -->
-        <svg width="90" height="110" viewBox="0 0 100 120" fill="none">
-          <path d="M20 20 L80 20 L70 70 C70 85 55 90 50 90 C45 90 30 85 30 70 Z" fill="#F59E0B" stroke="#FBBF24" stroke-width="4" />
-          <rect x="42" y="90" width="16" height="15" fill="#D97706" />
-          <rect x="25" y="105" width="50" height="12" rx="4" fill="#78350F" />
-          <path d="M15 30 C5 30 5 50 20 55" stroke="#FBBF24" stroke-width="5" fill="none" />
-          <path d="M85 30 C95 30 95 50 80 55" stroke="#FBBF24" stroke-width="5" fill="none" />
-        </svg>
-
-        <img class="final-char-img" src="robot.png" alt="Fahim" />
-      </div>
-
-      <div class="summary-cards">
-        <div class="card-human-sum">
-          <div class="sum-title">❤️ HUMAN (Hessa)</div>
-          <div class="sum-desc">“I can FEEL.”</div>
-        </div>
-        <div class="card-ai-sum">
-          <div class="sum-title">🤖 AI (Fahim)</div>
-          <div class="sum-desc">“I can HELP, but I don’t FEEL.”</div>
-        </div>
-      </div>
-
-      <div class="remember-box">
-        <div class="remember-title">⭐ REMEMBER ⭐</div>
-        <div class="remember-text">
-          AI can sound kind and help us with answers.<br />
-          But AI does not have real feelings like people do!
-        </div>
-      </div>
-
-      <button class="restart-btn" onclick="restartGame()">🔄 PLAY AGAIN!</button>
-    </div>
+<div class="quiz-card">
+  <div class="score-board">Score: <span id="score">0</span></div>
+  
+  <div id="quiz-box">
+    <h3 id="question-text">Question goes here</h3>
+    <div id="options-container" class="options"></div>
   </div>
 
-  <script>
-    // Game Questions Dataset
-    const questions = [
-      {
-        text: "“My friend was sad. I felt sad too and gave her a hug.”",
-        answer: "HUMAN",
-        isSpecial: false
-      },
-      {
-        text: "“You sound sad. Would you like me to help?”",
-        answer: "AI",
-        isSpecial: false
-      },
-      {
-        text: "“I was scared on my first day too. I know how you feel.”",
-        answer: "HUMAN",
-        isSpecial: false
-      },
-      {
-        text: "“I’m sorry you are upset. I can give you some ideas.”",
-        answer: "AI",
-        isSpecial: false
-      },
-      {
-        text: "“My friend lost the game. I felt bad for him and stayed with him.”",
-        answer: "HUMAN",
-        isSpecial: false
-      },
-      {
-        text: "“That sounds difficult. How can I help you?”",
-        answer: "AI",
-        isSpecial: false
-      },
-      {
-        text: "“My brother fell down. I saw him crying and I felt worried.”",
-        answer: "HUMAN",
-        isSpecial: false
-      },
-      {
-        text: "“I understand that losing your toy can make you sad.”",
-        answer: "AI",
-        isSpecial: false
-      },
-      {
-        text: "“My friend was nervous. I remembered feeling nervous too, so I held her hand.”",
-        answer: "HUMAN",
-        isSpecial: false
-      },
-      {
-        text: "“That must have made you feel lonely. I’m sorry you felt that way.”",
-        answer: "AI",
-        isSpecial: true
-      }
-    ];
+  <div id="result-box" class="hidden">
+    <h2>Quiz Completed!</h2>
+    <p>Your final score is: <span id="final-score">0</span></p>
+    <button onclick="restartQuiz()">Play Again</button>
+  </div>
+</div>
 
-    let currentRound = 0;
-    let score = 0;
-    let isCorrectAnswer = false; // Tracks if current modal response is correct
-
-    // Web Audio Sound Synthesizer
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playSound(type) {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      if (type === 'correct') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'wrong') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'win') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
-        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
-      }
+<script>
+  // 1. Define your questions list
+  const questions = [
+    {
+      question: "What does AI stand for?",
+      options: ["Automated Internet", "Artificial Intelligence", "Active Interface"],
+      answer: 1 // Index of correct answer
+    },
+    {
+      question: "Which device is used to touch or draw on a screen?",
+      options: ["Keyboard", "Mouse", "Stylus Pen"],
+      answer: 2
+    },
+    {
+      question: "Which of these is a web browser?",
+      options: ["Chrome", "Photoshop", "Excel"],
+      answer: 0
     }
+  ];
 
-    // Start Game from Opener
-    function startGame() {
-      playSound('correct');
-      document.getElementById('intro-screen').style.display = 'none';
-      document.getElementById('game-header').style.display = 'flex';
-      document.getElementById('game-middle').style.display = 'flex';
-      document.getElementById('game-buttons').style.display = 'flex';
-      loadQuestion();
-    }
+  // 2. Track State Variables
+  let currentQuestionIndex = 0;
+  let score = 0;
 
-    // Load Question
-    function loadQuestion() {
-      const q = questions[currentRound];
-      document.getElementById('round-display').innerText = `ROUND ${currentRound + 1} OF 10`;
-      document.getElementById('score-display').innerText = `❤️ Score: ${score}/10`;
-      document.getElementById('question-text').innerText = q.text;
+  // DOM Elements
+  const questionText = document.getElementById("question-text");
+  const optionsContainer = document.getElementById("options-container");
+  const scoreElement = document.getElementById("score");
+  const quizBox = document.getElementById("quiz-box");
+  const resultBox = document.getElementById("result-box");
+  const finalScore = document.getElementById("final-score");
 
-      const badge = document.getElementById('special-badge');
-      if (q.isSpecial) {
-        badge.style.display = 'block';
-      } else {
-        badge.style.display = 'none';
-      }
-    }
+  // 3. Render Question Function
+  function loadQuestion() {
+    const currentQuestion = questions[currentQuestionIndex];
+    
+    // Update Question Title
+    questionText.innerText = currentQuestion.question;
+    
+    // Clear previous option buttons
+    optionsContainer.innerHTML = "";
 
-    // Process Choice
-    function makeChoice(choice) {
-      const q = questions[currentRound];
-      const modal = document.getElementById('feedback-modal');
-      const modalCard = document.getElementById('modal-card-bg');
-      const title = document.getElementById('modal-title');
-      const subtitle = document.getElementById('modal-subtitle');
-      const btn = document.getElementById('modal-btn');
-
-      if (choice === q.answer) {
-        playSound('correct');
-        score++;
-        document.getElementById('score-display').innerText = `❤️ Score: ${score}/10`;
-
-        if (q.answer === 'HUMAN') {
-          title.innerText = '❤️ YES!';
-          title.style.color = '#ef4444';
-          subtitle.innerText = 'HESSA CAN FEEL REAL EMPATHY!';
-          modalCard.style.borderColor = '#ef4444';
-          modalCard.style.boxShadow = '0 0 50px rgba(239, 68, 68, 0.5)';
-        } else {
-          title.innerText = '🤖 YES!';
-          title.style.color = '#06b6d4';
-          subtitle.innerText = 'FAHIM CAN SOUND CARING...\nBUT IT DOESN’T HAVE FEELINGS!';
-          modalCard.style.borderColor = '#06b6d4';
-          modalCard.style.boxShadow = '0 0 50px rgba(6, 182, 212, 0.5)';
-        }
-
-        confetti({
-          particleCount: 60,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-
-        btn.innerText = 'NEXT ROUND ➔';
-        isCorrectAnswer = true;
-      } else {
-        playSound('wrong');
-        title.innerText = '🤔 OOPS! TRY AGAIN!';
-        title.style.color = '#f59e0b';
-        subtitle.innerText = '“Who can really FEEL?”';
-        modalCard.style.borderColor = '#f59e0b';
-        modalCard.style.boxShadow = '0 0 50px rgba(245, 158, 11, 0.5)';
-        btn.innerText = 'TRY AGAIN 🔄';
-        isCorrectAnswer = false;
-      }
-
-      modal.style.display = 'flex';
-    }
-
-    function nextAction() {
-      const modal = document.getElementById('feedback-modal');
-      modal.style.display = 'none';
-
-      if (isCorrectAnswer) {
-        currentRound++;
-        if (currentRound < questions.length) {
-          loadQuestion();
-        } else {
-          showFinalScreen();
-        }
-      }
-    }
-
-    function showFinalScreen() {
-      playSound('win');
-      document.getElementById('game-header').style.display = 'none';
-      document.getElementById('game-middle').style.display = 'none';
-      document.getElementById('game-buttons').style.display = 'none';
+    // Create a button for each option
+    currentQuestion.options.forEach((optionText, index) => {
+      const button = document.createElement("button");
+      button.innerText = optionText;
       
-      const finalScreen = document.getElementById('final-screen');
-      finalScreen.style.display = 'flex';
+      // Attach click listener to handle the answer selection
+      button.onclick = () => handleAnswer(index);
+      
+      optionsContainer.appendChild(button);
+    });
+  }
 
-      let duration = 3 * 1000;
-      let animationEnd = Date.now() + duration;
-      let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+  // 4. Handle Answer Selection Logic
+  function handleAnswer(selectedIndex) {
+    const currentQuestion = questions[currentQuestionIndex];
 
-      let interval = setInterval(function() {
-        let timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-        let particleCount = 50 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-      }, 250);
+    // Check if the selected answer is correct
+    if (selectedIndex === currentQuestion.answer) {
+      score += 10;
+      scoreElement.innerText = score; // Update score display
     }
 
-    function randomInRange(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+    // Step 1: Move to the next index
+    currentQuestionIndex++;
 
-    function restartGame() {
-      currentRound = 0;
-      score = 0;
-      isCorrectAnswer = false;
-      document.getElementById('final-screen').style.display = 'none';
-      document.getElementById('intro-screen').style.display = 'flex';
+    // Step 2: Check if there are more questions left
+    if (currentQuestionIndex < questions.length) {
+      loadQuestion(); // Re-render screen with the next question
+    } else {
+      showResults(); // End of quiz
     }
-  </script>
+  }
+
+  // 5. Display Final Results
+  function showResults() {
+    quizBox.classList.add("hidden");
+    resultBox.classList.remove("hidden");
+    finalScore.innerText = score;
+  }
+
+  // 6. Reset & Restart
+  function restartQuiz() {
+    score = 0;
+    currentQuestionIndex = 0;
+    scoreElement.innerText = score;
+    resultBox.classList.add("hidden");
+    quizBox.classList.remove("hidden");
+    loadQuestion();
+  }
+
+  // Start the quiz on page load
+  loadQuestion();
+</script>
+
 </body>
 </html>
