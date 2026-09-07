@@ -711,7 +711,7 @@
 
     let currentRound = 0;
     let score = 0;
-    let isRetry = false;
+    let isCorrectAnswer = false; // Tracks if current modal response is correct
 
     // Web Audio Sound Synthesizer
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -788,7 +788,7 @@
 
       if (choice === q.answer) {
         playSound('correct');
-        if (!isRetry) score++;
+        score++;
         document.getElementById('score-display').innerText = `❤️ Score: ${score}/10`;
 
         if (q.answer === 'HUMAN') {
@@ -812,7 +812,7 @@
         });
 
         btn.innerText = 'NEXT ROUND ➔';
-        isRetry = false;
+        isCorrectAnswer = true;
       } else {
         playSound('wrong');
         title.innerText = '🤔 OOPS! TRY AGAIN!';
@@ -821,7 +821,7 @@
         modalCard.style.borderColor = '#f59e0b';
         modalCard.style.boxShadow = '0 0 50px rgba(245, 158, 11, 0.5)';
         btn.innerText = 'TRY AGAIN 🔄';
-        isRetry = true;
+        isCorrectAnswer = false;
       }
 
       modal.style.display = 'flex';
@@ -831,7 +831,7 @@
       const modal = document.getElementById('feedback-modal');
       modal.style.display = 'none';
 
-      if (!isRetry) {
+      if (isCorrectAnswer) {
         currentRound++;
         if (currentRound < questions.length) {
           loadQuestion();
@@ -872,7 +872,7 @@
     function restartGame() {
       currentRound = 0;
       score = 0;
-      isRetry = false;
+      isCorrectAnswer = false;
       document.getElementById('final-screen').style.display = 'none';
       document.getElementById('intro-screen').style.display = 'flex';
     }
