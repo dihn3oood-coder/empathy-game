@@ -1,168 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Quiz Game</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      background-color: #f4f4f9;
     }
-    .quiz-card {
+
+    .quiz-container {
       background: #ffffff;
-      padding: 24px;
+      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 320px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
       text-align: center;
     }
-    .options {
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #eef0f3;
+    }
+
+    .score-badge {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    .question-count {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      color: #1a1a1a;
+      margin-bottom: 25px;
+      min-height: 50px;
+    }
+
+    .options-grid {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 12px;
     }
-    button {
-      padding: 10px;
-      border: 1px solid #007bff;
-      background-color: #007bff;
-      color: white;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .score-board {
-      font-weight: bold;
-      margin-bottom: 15px;
+
+    .option-btn {
+      background-color: #ffffff;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 1rem;
       color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
     }
+
+    .option-btn:hover {
+      border-color: #2196f3;
+      background-color: #e3f2fd;
+    }
+
     .hidden {
-      display: none;
+      display: none !important;
+    }
+
+    .restart-btn {
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .restart-btn:hover {
+      background-color: #1976d2;
     }
   </style>
 </head>
 <body>
 
-<div class="quiz-card">
-  <div class="score-board">Score: <span id="score">0</span></div>
-  
-  <div id="quiz-box">
-    <h3 id="question-text">Question goes here</h3>
-    <div id="options-container" class="options"></div>
+  <div class="quiz-container">
+    <!-- Active Quiz View -->
+    <div id="quiz-view">
+      <div class="header-bar">
+        <span class="question-count" id="question-tracker">Question 1 of 3</span>
+        <span class="score-badge">Points: <span id="score-display">0</span></span>
+      </div>
+
+      <div class="question-text" id="question-text">Loading question...</div>
+
+      <div class="options-grid" id="options-container">
+        <!-- Buttons are injected here dynamically by JS -->
+      </div>
+    </div>
+
+    <!-- Final Results View -->
+    <div id="results-view" class="hidden">
+      <h2>🎉 Quiz Complete!</h2>
+      <p>Your total score is: <strong id="final-score">0</strong> points</p>
+      <button class="restart-btn" onclick="resetQuiz()">Play Again</button>
+    </div>
   </div>
 
-  <div id="result-box" class="hidden">
-    <h2>Quiz Completed!</h2>
-    <p>Your final score is: <span id="final-score">0</span></p>
-    <button onclick="restartQuiz()">Play Again</button>
-  </div>
-</div>
+  <script>
+    // 1. DATA: List of questions and correct answer indices
+    const quizData = [
+      {
+        question: "What is the main function of a computer CPU?",
+        options: ["Store persistent files", "Process instructions and calculations", "Display images on screen", "Provide internet connection"],
+        correctIndex: 1
+      },
+      {
+        question: "Which device allows input via a screen touch or pen?",
+        options: ["Stylus Tablet", "Thermal Printer", "Network Switch", "External Hard Drive"],
+        correctIndex: 0
+      },
+      {
+        question: "What does HTML stand for?",
+        options: ["Hyper Text Markup Language", "High Tech Multi Language", "Home Tool Media Level", "Hyper Transfer Main Link"],
+        correctIndex: 0
+      }
+    ];
 
-<script>
-  // 1. Define your questions list
-  const questions = [
-    {
-      question: "What does AI stand for?",
-      options: ["Automated Internet", "Artificial Intelligence", "Active Interface"],
-      answer: 1 // Index of correct answer
-    },
-    {
-      question: "Which device is used to touch or draw on a screen?",
-      options: ["Keyboard", "Mouse", "Stylus Pen"],
-      answer: 2
-    },
-    {
-      question: "Which of these is a web browser?",
-      options: ["Chrome", "Photoshop", "Excel"],
-      answer: 0
-    }
-  ];
+    // 2. STATE VARIABLES
+    let currentQuestionIndex = 0;
+    let totalScore = 0;
 
-  // 2. Track State Variables
-  let currentQuestionIndex = 0;
-  let score = 0;
+    // 3. DOM ELEMENTS
+    const questionTracker = document.getElementById("question-tracker");
+    const scoreDisplay = document.getElementById("score-display");
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    const quizView = document.getElementById("quiz-view");
+    const resultsView = document.getElementById("results-view");
+    const finalScore = document.getElementById("final-score");
 
-  // DOM Elements
-  const questionText = document.getElementById("question-text");
-  const optionsContainer = document.getElementById("options-container");
-  const scoreElement = document.getElementById("score");
-  const quizBox = document.getElementById("quiz-box");
-  const resultBox = document.getElementById("result-box");
-  const finalScore = document.getElementById("final-score");
+    // 4. FUNCTION: Renders the active question onto the screen
+    function renderQuestion() {
+      // Clear out old option buttons from previous question
+      optionsContainer.innerHTML = "";
 
-  // 3. Render Question Function
-  function loadQuestion() {
-    const currentQuestion = questions[currentQuestionIndex];
-    
-    // Update Question Title
-    questionText.innerText = currentQuestion.question;
-    
-    // Clear previous option buttons
-    optionsContainer.innerHTML = "";
+      // Get current question object
+      const currentData = quizData[currentQuestionIndex];
 
-    // Create a button for each option
-    currentQuestion.options.forEach((optionText, index) => {
-      const button = document.createElement("button");
-      button.innerText = optionText;
-      
-      // Attach click listener to handle the answer selection
-      button.onclick = () => handleAnswer(index);
-      
-      optionsContainer.appendChild(button);
-    });
-  }
+      // Update question text and progress tracker
+      questionText.innerText = currentData.question;
+      questionTracker.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
 
-  // 4. Handle Answer Selection Logic
-  function handleAnswer(selectedIndex) {
-    const currentQuestion = questions[currentQuestionIndex];
+      // Create a button for each answer option
+      currentData.options.forEach((optionText, optionIndex) => {
+        const button = document.createElement("button");
+        button.classList.add("option-btn");
+        button.innerText = optionText;
 
-    // Check if the selected answer is correct
-    if (selectedIndex === currentQuestion.answer) {
-      score += 10;
-      scoreElement.innerText = score; // Update score display
+        // Attach click event handler directly to each created button
+        button.onclick = () => selectOption(optionIndex);
+
+        optionsContainer.appendChild(button);
+      });
     }
 
-    // Step 1: Move to the next index
-    currentQuestionIndex++;
+    // 5. FUNCTION: Processes the user's answer choice
+    function selectOption(selectedIndex) {
+      const currentData = quizData[currentQuestionIndex];
 
-    // Step 2: Check if there are more questions left
-    if (currentQuestionIndex < questions.length) {
-      loadQuestion(); // Re-render screen with the next question
-    } else {
-      showResults(); // End of quiz
+      // Check if selected index matches the correct answer
+      if (selectedIndex === currentData.correctIndex) {
+        totalScore += 10;
+        scoreDisplay.innerText = totalScore; // Update points on UI
+      }
+
+      // STEP 1: Increment the question index variable
+      currentQuestionIndex++;
+
+      // STEP 2: Check if there are remaining questions
+      if (currentQuestionIndex < quizData.length) {
+        // Force the page to render the new question
+        renderQuestion();
+      } else {
+        // Show completion screen if out of questions
+        showCompletionScreen();
+      }
     }
-  }
 
-  // 5. Display Final Results
-  function showResults() {
-    quizBox.classList.add("hidden");
-    resultBox.classList.remove("hidden");
-    finalScore.innerText = score;
-  }
+    // 6. FUNCTION: Displays end-game results
+    function showCompletionScreen() {
+      quizView.classList.add("hidden");
+      resultsView.classList.remove("hidden");
+      finalScore.innerText = totalScore;
+    }
 
-  // 6. Reset & Restart
-  function restartQuiz() {
-    score = 0;
-    currentQuestionIndex = 0;
-    scoreElement.innerText = score;
-    resultBox.classList.add("hidden");
-    quizBox.classList.remove("hidden");
-    loadQuestion();
-  }
+    // 7. FUNCTION: Resets state to start over
+    function resetQuiz() {
+      currentQuestionIndex = 0;
+      totalScore = 0;
+      scoreDisplay.innerText = totalScore;
+      resultsView.classList.add("hidden");
+      quizView.classList.remove("hidden");
+      renderQuestion();
+    }
 
-  // Start the quiz on page load
-  loadQuestion();
-</script>
-
+    // INITIALIZE: Run when page loads
+    renderQuestion();
+  </script>
 </body>
 </html>
