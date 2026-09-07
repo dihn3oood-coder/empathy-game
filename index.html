@@ -25,7 +25,7 @@
       border-radius: 12px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 450px;
+      max-width: 480px;
       text-align: center;
     }
 
@@ -107,14 +107,14 @@
     <!-- Active Quiz View -->
     <div id="quiz-view">
       <div class="header-bar">
-        <span class="question-count" id="question-tracker">Question 1 of 3</span>
+        <span class="question-count" id="question-tracker">Question 1</span>
         <span class="score-badge">Points: <span id="score-display">0</span></span>
       </div>
 
       <div class="question-text" id="question-text">Loading question...</div>
 
       <div class="options-grid" id="options-container">
-        <!-- Buttons are injected here dynamically by JS -->
+        <!-- Buttons injected dynamically -->
       </div>
     </div>
 
@@ -127,26 +127,26 @@
   </div>
 
   <script>
-    // 1. DATA: List of questions and correct answer indices
+    // 1. DATA ARRAY: REPLACE THIS ARRAY WITH YOUR OWN QUESTIONS
     const quizData = [
       {
-        question: "What is the main function of a computer CPU?",
-        options: ["Store persistent files", "Process instructions and calculations", "Display images on screen", "Provide internet connection"],
+        question: "Which human quality allows us to feel empathy towards others?",
+        options: ["Algorithms", "Emotions & Heart", "Data Processing", "Sensors"],
         correctIndex: 1
       },
       {
-        question: "Which device allows input via a screen touch or pen?",
-        options: ["Stylus Tablet", "Thermal Printer", "Network Switch", "External Hard Drive"],
-        correctIndex: 0
+        question: "How does an AI model learn to recognize pictures?",
+        options: ["By sleeping", "By training on thousands of data examples", "By guessing randomly", "It is born knowing everything"],
+        correctIndex: 1
       },
       {
-        question: "What does HTML stand for?",
-        options: ["Hyper Text Markup Language", "High Tech Multi Language", "Home Tool Media Level", "Hyper Transfer Main Link"],
+        question: "Which tool is used as an input device for digital drawing on tablets?",
+        options: ["Stylus Pen", "Thermal Printer", "Speaker", "Projector"],
         correctIndex: 0
       }
     ];
 
-    // 2. STATE VARIABLES
+    // 2. STATE TRACKERS
     let currentQuestionIndex = 0;
     let totalScore = 0;
 
@@ -159,62 +159,58 @@
     const resultsView = document.getElementById("results-view");
     const finalScore = document.getElementById("final-score");
 
-    // 4. FUNCTION: Renders the active question onto the screen
+    // 4. RENDER QUESTION FUNCTION
     function renderQuestion() {
-      // Clear out old option buttons from previous question
+      // Clear previous options to prevent frozen click handlers
       optionsContainer.innerHTML = "";
 
-      // Get current question object
       const currentData = quizData[currentQuestionIndex];
 
-      // Update question text and progress tracker
       questionText.innerText = currentData.question;
       questionTracker.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
 
-      // Create a button for each answer option
+      // Create dynamic option buttons
       currentData.options.forEach((optionText, optionIndex) => {
         const button = document.createElement("button");
         button.classList.add("option-btn");
         button.innerText = optionText;
 
-        // Attach click event handler directly to each created button
+        // Bind answer selection handler
         button.onclick = () => selectOption(optionIndex);
 
         optionsContainer.appendChild(button);
       });
     }
 
-    // 5. FUNCTION: Processes the user's answer choice
+    // 5. SELECTION LOGIC (Fixed transition bug)
     function selectOption(selectedIndex) {
       const currentData = quizData[currentQuestionIndex];
 
-      // Check if selected index matches the correct answer
+      // Update score if correct
       if (selectedIndex === currentData.correctIndex) {
         totalScore += 10;
-        scoreDisplay.innerText = totalScore; // Update points on UI
+        scoreDisplay.innerText = totalScore;
       }
 
-      // STEP 1: Increment the question index variable
+      // Increment index
       currentQuestionIndex++;
 
-      // STEP 2: Check if there are remaining questions
+      // Force view update or load completion screen
       if (currentQuestionIndex < quizData.length) {
-        // Force the page to render the new question
         renderQuestion();
       } else {
-        // Show completion screen if out of questions
         showCompletionScreen();
       }
     }
 
-    // 6. FUNCTION: Displays end-game results
+    // 6. SHOW RESULTS
     function showCompletionScreen() {
       quizView.classList.add("hidden");
       resultsView.classList.remove("hidden");
       finalScore.innerText = totalScore;
     }
 
-    // 7. FUNCTION: Resets state to start over
+    // 7. RESTART QUIZ
     function resetQuiz() {
       currentQuestionIndex = 0;
       totalScore = 0;
@@ -224,7 +220,7 @@
       renderQuestion();
     }
 
-    // INITIALIZE: Run when page loads
+    // INITIALIZE ON LOAD
     renderQuestion();
   </script>
 </body>
