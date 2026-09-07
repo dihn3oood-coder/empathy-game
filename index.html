@@ -45,7 +45,6 @@
       overflow: hidden;
     }
 
-    /* Mobile & Small Screen Adaptation */
     @media (max-aspect-ratio: 16/9), (max-width: 900px) {
       #game-stage {
         height: 100vh;
@@ -56,7 +55,7 @@
       }
     }
 
-    /* Game Show Stage Lights Top Bar */
+    /* Stage Lights */
     .stage-lights {
       position: absolute;
       top: 0;
@@ -130,7 +129,6 @@
       z-index: 10;
     }
 
-    /* 3D Character Container & Image Styling */
     .character-box {
       width: 180px;
       height: 220px;
@@ -488,20 +486,14 @@
     </div>
 
     <div class="middle-stage" id="game-middle">
-      <!-- Child Character Vector Asset -->
       <div class="character-box">
         <div class="char-avatar">
           <svg class="char-img" viewBox="0 0 100 120" fill="none">
-            <!-- Body -->
             <path d="M20 110 C20 80, 35 70, 50 70 C65 70, 80 80, 80 110 Z" fill="#ef4444" />
-            <!-- Head -->
             <circle cx="50" cy="45" r="28" fill="#fde047" />
-            <!-- Eyes -->
             <circle cx="40" cy="42" r="4" fill="#0f172a" />
             <circle cx="60" cy="42" r="4" fill="#0f172a" />
-            <!-- Smile -->
             <path d="M 40 55 Q 50 65 60 55" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none" />
-            <!-- Hair -->
             <path d="M 22 40 C 20 15, 80 15, 78 40 C 70 25, 30 25, 22 40 Z" fill="#78350f" />
           </svg>
         </div>
@@ -514,23 +506,17 @@
         <div class="question-text" id="question-text">Loading question...</div>
       </div>
 
-      <!-- Robot Character Vector Asset -->
       <div class="character-box">
         <div class="char-avatar">
           <svg class="char-img" viewBox="0 0 100 120" fill="none">
-            <!-- Antenna -->
             <line x1="50" y1="10" x2="50" y2="25" stroke="#06b6d4" stroke-width="4" />
             <circle cx="50" cy="8" r="5" fill="#f59e0b" />
-            <!-- Body -->
             <rect x="25" y="75" width="50" height="35" rx="8" fill="#0284c7" stroke="#38bdf8" stroke-width="3" />
             <circle cx="50" cy="92" r="6" fill="#22c55e" />
-            <!-- Head -->
             <rect x="20" y="25" width="60" height="45" rx="12" fill="#0891b2" stroke="#38bdf8" stroke-width="3" />
-            <!-- Screen Eyes -->
             <rect x="30" y="35" width="40" height="18" rx="6" fill="#0f172a" />
             <circle cx="40" cy="44" r="3" fill="#06b6d4" />
             <circle cx="60" cy="44" r="3" fill="#06b6d4" />
-            <!-- Mouth Bar -->
             <line x1="38" y1="60" x2="62" y2="60" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" />
           </svg>
         </div>
@@ -538,7 +524,7 @@
       </div>
     </div>
 
-    <!-- Huge Answer Buttons Stage -->
+    <!-- Answer Buttons -->
     <div class="button-stage" id="game-buttons">
       <button class="huge-btn btn-human" onclick="makeChoice('HUMAN')">
         ❤️ HUMAN
@@ -573,7 +559,6 @@
           </svg>
         </div>
 
-        <!-- Big Trophy -->
         <svg width="90" height="110" viewBox="0 0 100 120" fill="none">
           <path d="M20 20 L80 20 L70 70 C70 85 55 90 50 90 C45 90 30 85 30 70 Z" fill="#F59E0B" stroke="#FBBF24" stroke-width="4" />
           <rect x="42" y="90" width="16" height="15" fill="#D97706" />
@@ -621,7 +606,6 @@
   </div>
 
   <script>
-    // Game Questions Dataset
     const questions = [
       {
         text: "“My friend was sad. I felt sad too and gave her a hug.”",
@@ -679,60 +663,50 @@
     let score = 0;
     let isRetry = false;
 
-    // Web Audio Sound Synthesizer with AudioContext Autoplay Fix
-    let audioCtx = null;
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
+    // Safe Web Audio Synthesizer
     function playSound(type) {
       try {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
         osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        gain.connect(ctx.destination);
 
         if (type === 'correct') {
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
-          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
           osc.start();
-          osc.stop(audioCtx.currentTime + 0.3);
+          osc.stop(ctx.currentTime + 0.3);
         } else if (type === 'wrong') {
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.3);
-          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.frequency.setValueAtTime(300, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
           osc.start();
-          osc.stop(audioCtx.currentTime + 0.3);
+          osc.stop(ctx.currentTime + 0.3);
         } else if (type === 'win') {
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
-          gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+          osc.frequency.setValueAtTime(440, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.5);
+          gain.gain.setValueAtTime(0.4, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
           osc.start();
-          osc.stop(audioCtx.currentTime + 0.5);
+          osc.stop(ctx.currentTime + 0.5);
         }
       } catch (e) {
-        console.warn('Audio playback not supported or blocked:', e);
+        // Fallback gracefully if browser restricts audio
       }
     }
 
-    // Safely trigger confetti
-    function triggerConfetti(options) {
+    function triggerConfetti(opts) {
       if (typeof confetti === 'function') {
-        confetti(options);
+        confetti(opts);
       }
     }
 
@@ -751,9 +725,8 @@
       }
     }
 
-    // Process Player Choice
+    // Process Choice
     function makeChoice(choice) {
-      initAudio();
       const q = questions[currentRound];
       const modal = document.getElementById('feedback-modal');
       const modalCard = document.getElementById('modal-card-bg');
@@ -762,7 +735,6 @@
       const btn = document.getElementById('modal-btn');
 
       if (choice === q.answer) {
-        // CORRECT CHOICE
         playSound('correct');
         if (!isRetry) score++;
         document.getElementById('score-display').innerText = `❤️ Score: ${score}/10`;
@@ -781,7 +753,6 @@
           modalCard.style.boxShadow = '0 0 50px rgba(6, 182, 212, 0.5)';
         }
 
-        // Fire Confetti on Correct Choice
         triggerConfetti({
           particleCount: 60,
           spread: 70,
@@ -791,7 +762,6 @@
         btn.innerText = 'NEXT ROUND ➔';
         isRetry = false;
       } else {
-        // WRONG CHOICE
         playSound('wrong');
         title.innerText = '🤔 OOPS! TRY AGAIN!';
         title.style.color = '#f59e0b';
@@ -805,7 +775,7 @@
       modal.style.display = 'flex';
     }
 
-    // Modal Action Button (Next or Retry)
+    // Modal Action
     function nextAction() {
       const modal = document.getElementById('feedback-modal');
       modal.style.display = 'none';
@@ -820,7 +790,7 @@
       }
     }
 
-    // Show Game Show Finale
+    // Finale
     function showFinalScreen() {
       playSound('win');
       document.getElementById('game-header').style.display = 'none';
@@ -830,7 +800,6 @@
       const finalScreen = document.getElementById('final-screen');
       finalScreen.style.display = 'flex';
 
-      // Big Finale Confetti Burst
       let duration = 3 * 1000;
       let animationEnd = Date.now() + duration;
       let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -850,7 +819,7 @@
       return Math.random() * (max - min) + min;
     }
 
-    // Restart Entire Game
+    // Restart
     function restartGame() {
       currentRound = 0;
       score = 0;
@@ -862,7 +831,7 @@
       loadQuestion();
     }
 
-    // Start Game
+    // Start
     loadQuestion();
   </script>
 </body>
